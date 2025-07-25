@@ -1,7 +1,11 @@
-import Image from "next/image";
+import Header from "@/components/Header";
+import SeatingChart from "@/components/seating-chart/SeatingChart";
 
 export default function Home() {
   return (
-    <p>start</p>
+    <div>
+      <Header />
+      <SeatingChart />
+    </div>
   );
 }
