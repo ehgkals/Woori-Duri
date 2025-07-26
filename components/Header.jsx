@@ -2,15 +2,42 @@ import React from "react";
 
 const Header = () => {
   return (
-    <header className="w-full bg-blue-100 text-blue-900 py-4 px-6 shadow-md flex items-center justify-between border-b-4 border-blue-400">
-      <div className="flex items-baseline gap-3">
-        <h1 className="text-5xl font-bold tracking-wide select-none">
-          Woori-Duri
-        </h1>
-        <span className="text-sm font-medium text-blue-600 select-none">
-          우리 함께
-        </span>
+    <header
+      className="w-full py-4 px-8 flex items-center justify-between shadow"
+      style={{
+        background: "#fff",
+        borderBottom: "6px solid #2482c5",
+        fontFamily:
+          "'Pretendard', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif",
+      }}
+    >
+      <div className="flex items-end gap-4">
+        <img
+          src="/wooriduri-icon.png"
+          alt="WOORI DURI 아이콘"
+          className="h-[54px] w-[54px] object-contain block"
+        />
+        <img
+          src="/wooriduri-logo.png"
+          alt="WOORI DURI 로고"
+          className="h-13 object-contain block"
+        />
       </div>
+
+      <button
+        className="font-semibold text-lg select-none rounded-full px-7 py-2 transition duration-200 hover:opacity-95"
+        style={{
+          background: "linear-gradient(90deg, #1e88e5, #42a5f5)", // 로고와 동일한 블루 톤
+          color: "#ffffff",
+          border: "1.5px solid #42a5f5",
+          boxShadow: "0 3px 10px rgba(66, 165, 245, 0.35)",
+          fontFamily: "'Pretendard', 'Malgun Gothic', sans-serif",
+          letterSpacing: "1px",
+        }}
+        type="button"
+      >
+        우리 함께
+      </button>
     </header>
   );
 };
