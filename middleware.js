@@ -5,7 +5,7 @@ export function middleware(request) {
 
   console.log('Client IP:', clientIP);
 
-  return new Response(null, { status: 204 });
+  return NextResponse.next();
 }
 
 export const config = {
