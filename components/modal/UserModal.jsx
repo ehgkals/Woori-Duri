@@ -1,9 +1,8 @@
-// components/NicknameModal.jsx
 "use client";
 
 import React, { useState } from "react";
 
-const NicknameModal = ({ onSubmit }) => {
+const UserModal = ({ onSubmit }) => {
   const [input, setInput] = useState("");
 
   const handleEnter = (e) => {
@@ -49,4 +48,4 @@ const NicknameModal = ({ onSubmit }) => {
   );
 };
 
-export default NicknameModal;
+export default UserModal;

@@ -1,6 +1,6 @@
 import React from "react";
 
-const Header = () => {
+const Header = ({ onReadyClick }) => {
   return (
     <header
       className="w-full py-4 px-8 flex items-center justify-between shadow"
@@ -35,6 +35,7 @@ const Header = () => {
           letterSpacing: "1px",
         }}
         type="button"
+        onClick={onReadyClick}
       >
         우리 함께
       </button>

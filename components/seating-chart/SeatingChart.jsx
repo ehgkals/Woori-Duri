@@ -2,15 +2,20 @@
 
 import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
+import { useRouter } from "next/navigation";
 import Seat from "./Seat";
 import UserModal from "../modal/UserModal";
+import ReadyModal from "../modal/ReadyModal";
 
-const SeatingChart = () => {
+const SeatingChart = ({ readyTriggerRef }) => {
   const [userData, setUserData] = useState([]);
   const [userIP, setUserIP] = useState("");
   const [userName, setUserName] = useState("");
   const [showUserModal, setShowUserModal] = useState(false);
+  const [showReadyModal, setShowReadyModal] = useState(false);
+  const [nextScreen, setNextScreen] = useState(false);
   const socketRef = React.useRef(null); // socket 값을 유지하기 위해
+  const router = useRouter();
 
   useEffect(() => {
     const socket = io("http://192.168.219.104:4000");
@@ -18,7 +23,6 @@ const SeatingChart = () => {
 
     // 서버로부터 받은 좌석 상태로 업데이트
     socket.on("userStatus", (data) => {
-      console.log("Received userStatus: ", data);
       setUserData(data);
 
       // UserIP로 사용자 정보 찾기
@@ -37,10 +41,30 @@ const SeatingChart = () => {
       }
     });
 
-    return () => {
-      socket.disconnect();
-    };
+    //
+    socket.on("showReadyModal", () => setShowReadyModal(true));
+
+    socket.on("moveToNextScreen", () => {
+      setShowReadyModal(false);
+      setNextScreen(true);
+    });
+
+    return () => socket.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (nextScreen) {
+      router.push("/game");
+    }
+  }, [nextScreen, router]);
+
+  useEffect(() => {
+    if (readyTriggerRef) readyTriggerRef.current = handleReadyButton;
+
+    return () => {
+      if (readyTriggerRef) readyTriggerRef.current = null;
+    };
+  }, [readyTriggerRef]);
 
   const handleUserNameSubmit = (name) => {
     if (!name || !socketRef.current) return;
@@ -50,9 +74,21 @@ const SeatingChart = () => {
     setShowUserModal(false);
   };
 
+  const handleReadyButton = () => {
+    if (socketRef.current) socketRef.current.emit("requestReady");
+  };
+
+  const handleReady = () => {
+    setShowReadyModal(false);
+    if (socketRef.current && userIP) {
+      socketRef.current.emit("readyResponse", { ip: userIP });
+    }
+  };
+
   return (
     <>
       {showUserModal && <UserModal onSubmit={handleUserNameSubmit} />}
+      {showReadyModal && !showUserModal && <ReadyModal onReady={handleReady} />}
       <div className="w-full min-w-[1040px] aspect-[1040/500] bg-white shadow-lg p-6 flex items-center justify-center overflow-auto">
         <div className="grid grid-cols-9 grid-rows-6 gap-4 w-full h-full">
           {/* 1행 (중앙 좌석만 배치) */}
