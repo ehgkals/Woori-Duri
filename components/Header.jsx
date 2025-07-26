@@ -27,7 +27,7 @@ const Header = () => {
       <button
         className="font-semibold text-lg select-none rounded-full px-7 py-2 transition duration-200 hover:opacity-95"
         style={{
-          background: "linear-gradient(90deg, #1e88e5, #42a5f5)", // 로고와 동일한 블루 톤
+          background: "linear-gradient(90deg, #1e88e5, #42a5f5)",
           color: "#ffffff",
           border: "1.5px solid #42a5f5",
           boxShadow: "0 3px 10px rgba(66, 165, 245, 0.35)",
