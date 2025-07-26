@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { io } from "socket.io-client";
 import { useRouter } from "next/navigation";
 import Seat from "./Seat";
@@ -23,27 +23,22 @@ const SeatingChart = ({ readyTriggerRef }) => {
 
     // 서버로부터 받은 좌석 상태로 업데이트
     socket.on("userStatus", (data) => {
-      setUserData(data);
+      if (!data || !Array.isArray(data.list)) return;
 
-      // UserIP로 사용자 정보 찾기
-      const userInfo = data.find(
-        (user) => user && user.status === "online" && user.name === ""
-      );
+      setUserData(data.list);
 
-      if (userInfo) {
-        setUserIP(userInfo.ip);
-        setShowUserModal(true);
-      } else {
-        const identifiedUser = data.find(
-          (user) => user && user.status === "online"
-        );
-        if (identifiedUser) setUserName(identifiedUser.name);
+      if (data.me) {
+        setUserIP(data.me);
+        const meInfo = data.list.find((user) => user.ip === data.me);
+        setUserName(meInfo?.name || "");
+        setShowUserModal(!meInfo?.name);
       }
     });
 
-    //
+    // 준비 완료 모달
     socket.on("showReadyModal", () => setShowReadyModal(true));
 
+    // 다음 화면으로 이동
     socket.on("moveToNextScreen", () => {
       setShowReadyModal(false);
       setNextScreen(true);
@@ -55,6 +50,7 @@ const SeatingChart = ({ readyTriggerRef }) => {
   useEffect(() => {
     if (nextScreen) {
       router.push("/game");
+      setNextScreen(false);
     }
   }, [nextScreen, router]);
 
@@ -80,15 +76,30 @@ const SeatingChart = ({ readyTriggerRef }) => {
 
   const handleReady = () => {
     setShowReadyModal(false);
+    console.log("handleReady 실행", userIP, userName);
     if (socketRef.current && userIP) {
       socketRef.current.emit("readyResponse", { ip: userIP });
     }
   };
 
+  const totalOnline = Array.isArray(userData) // 총 온라인 사용자
+    ? userData.filter((u) => u.status === "online").length
+    : 0;
+
+  const readyCount = Array.isArray(userData) // 준비완료 사용자
+    ? userData.filter((u) => u.status === "online" && u.ready).length
+    : 0;
+
   return (
     <>
       {showUserModal && <UserModal onSubmit={handleUserNameSubmit} />}
-      {showReadyModal && !showUserModal && <ReadyModal onReady={handleReady} />}
+      {showReadyModal && (
+        <ReadyModal
+          onReady={handleReady}
+          totalOnline={totalOnline}
+          readyCount={readyCount}
+        />
+      )}
       <div className="w-full min-w-[1040px] aspect-[1040/500] bg-white shadow-lg p-6 flex items-center justify-center overflow-auto">
         <div className="grid grid-cols-9 grid-rows-6 gap-4 w-full h-full">
           {/* 1행 (중앙 좌석만 배치) */}
@@ -139,7 +150,6 @@ const SeatingChart = ({ readyTriggerRef }) => {
                 </div>
               );
             }
-
             return <div key={`r5c${col}`} />;
           })}
         </div>
