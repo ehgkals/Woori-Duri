@@ -6,11 +6,9 @@ import { useSocket } from "@/context/SocketContext";
 import Seat from "./Seat";
 import UserModal from "../modal/UserModal";
 import ReadyModal from "../modal/ReadyModal";
-import { useGameAccess } from "@/context/GameAccessContext";
 
 const SeatingChart = () => {
   const socket = useSocket();
-  const { setEnterGame } = useGameAccess();
   const [userData, setUserData] = useState([]);
   const [userIP, setUserIP] = useState("");
   const [userName, setUserName] = useState("");
@@ -55,11 +53,14 @@ const SeatingChart = () => {
   // Game 페이지로 이동
   useEffect(() => {
     if (nextScreen) {
-      setEnterGame(true); // 정상적으로 진입했는지 확인
-      router.push("/game");
-      setNextScreen(false);
+      sessionStorage.setItem("accessGame", "1");
+      // 세션 스토리지가 반영되기 전에 페이지 이동 방지
+      setTimeout(() => {
+        router.push("/game");
+        setNextScreen(false);
+      }, 50);
     }
-  }, [nextScreen, router, setEnterGame]);
+  }, [nextScreen, router]);
 
   // User 이름 설정
   const handleUserNameSubmit = (name) => {

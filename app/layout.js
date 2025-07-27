@@ -1,6 +1,5 @@
 import "./globals.css";
 import { SocketProvider } from "@/context/SocketContext";
-import { GameAccessProvider } from "@/context/GameAccessContext";
 
 export const metadata = {
   title: "WOORI DURI",
@@ -13,9 +12,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full">
       <body className="min-h-screen bg-blue-300">
-        <SocketProvider>
-          <GameAccessProvider>{children}</GameAccessProvider>
-        </SocketProvider>
+        <SocketProvider>{children}</SocketProvider>
       </body>
     </html>
   );

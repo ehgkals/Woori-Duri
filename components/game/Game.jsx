@@ -1,28 +1,28 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useGameAccess } from "@/context/GameAccessContext";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useSocket } from "@/context/SocketContext";
 
 const WORD_COUNT = 20;
 const WORD_API_URL = `https://random-word-api.herokuapp.com/word?number=${WORD_COUNT}`;
 
 const Game = () => {
-  const { enterGame, setEnterGame } = useGameAccess();
+  const socket = useSocket();
   const [words, setWords] = useState([]);
   const [currentWord, setCurrentWord] = useState(0);
-  const [score, setScore] = useState(0);
   const [inputValue, setInputValue] = useState("");
   const [inputError, setInputError] = useState(false);
+  const [finishTime, setFinishTime] = useState(null);
+  const [userIP, setUserIP] = useState("");
+  const startTimeRef = useRef(null);
   const router = useRouter();
 
+  // 잘못된 접근 redirect
   useEffect(() => {
-    if (!enterGame) {
-      router.replace("/");
-    }
-
-    return () => setEnterGame(false);
-  }, [enterGame, setEnterGame, router]);
+    const canAccess = sessionStorage.getItem("accessGame") === "1";
+    if (!canAccess) router.replace("/");
+  }, [router]);
 
   useEffect(() => {
     fetch(WORD_API_URL)
@@ -35,12 +35,42 @@ const Game = () => {
     setInputError(false);
   }, [currentWord, words]);
 
+  // 내 아이피 설정
+  useEffect(() => {
+    if (!socket) return;
+
+    const myStatus = (data) => {
+      if (data.me) setUserIP(data.me);
+    };
+
+    socket.on("userStatus", myStatus);
+
+    return () => socket.off("userStatus", myStatus);
+  }, [socket]);
+
+  // 시작 시간
+  useEffect(() => {
+    if (words.length > 0) {
+      startTimeRef.current = Date.now();
+    }
+  }, [words]);
+
   const handleEnter = (e) => {
     if (e.key === "Enter" || e.key === " ") {
       if (!inputValue.trim()) return;
 
       if (inputValue.trim() === words[currentWord]) {
-        setScore((score) => score + 1);
+        if (currentWord + 1 === words.length) {
+          const now = Date.now();
+          const duration = now - startTimeRef.current;
+          setFinishTime(duration);
+
+          // 서버로 시간 전송
+          if (socket && userIP) {
+            socket.emit("finishGame", { ip: userIP, finishTime: duration });
+          }
+        }
+
         setCurrentWord((current) => current + 1);
         setInputError(false);
         setInputValue("");
@@ -90,22 +120,20 @@ const Game = () => {
             <span className="font-bold">{words.length - currentWord}</span>
           </span>
           <span className="text-[#2482c5] font-bold">
-            점수: {score} / {words.length}
+            {finishTime
+              ? `기록: ${(finishTime / 1000).toFixed(2)}초`
+              : `진행: ${currentWord} / ${words.length}`}
           </span>
         </div>
         {currentWord >= words.length && (
           <button
             onClick={() => {
-              setScore(0);
-              setCurrentWord(0);
-              setInputValue("");
-              fetch(WORD_API_URL)
-                .then((res) => res.json())
-                .then((data) => setWords(data));
+              sessionStorage.removeItem("accessGame");
+              router.replace("/");
             }}
             className="mt-12 bg-gradient-to-r from-[#1e88e5] to-[#42a5f5] text-white font-bold px-16 py-6 rounded-full shadow-lg hover:scale-105 transition-all text-3xl"
           >
-            다시하기
+            나가기
           </button>
         )}
       </div>

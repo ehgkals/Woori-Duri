@@ -1,4 +1,5 @@
 import Game from "@/components/game/Game";
+import LeaderBoard from "@/components/game/LeaderBoard";
 
 export default function GamePage() {
   return (
@@ -26,6 +27,7 @@ export default function GamePage() {
         </div>
       </header>
       <Game />
+      <LeaderBoard />
     </>
   );
 }
