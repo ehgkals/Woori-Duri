@@ -7,7 +7,7 @@ import Seat from "./Seat";
 import UserModal from "../modal/UserModal";
 import ReadyModal from "../modal/ReadyModal";
 
-const SeatingChart = ({ readyTriggerRef }) => {
+const SeatingChart = () => {
   const socket = useSocket();
   const [userData, setUserData] = useState([]);
   const [userIP, setUserIP] = useState("");
@@ -57,20 +57,10 @@ const SeatingChart = ({ readyTriggerRef }) => {
     }
   }, [nextScreen, router]);
 
-  useEffect(() => {
-    if (readyTriggerRef) readyTriggerRef.current = handleReadyButton;
-
-    return () => {
-      if (readyTriggerRef) readyTriggerRef.current = null;
-    };
-  }, [readyTriggerRef]);
-
   const handleUserNameSubmit = (name) => {
     if (!name || !socket) return;
 
     socket.emit("setUserName", name);
-    setUserName(name);
-    setShowUserModal(false);
   };
 
   const handleReady = () => {
