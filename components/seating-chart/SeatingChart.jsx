@@ -66,6 +66,7 @@ const SeatingChart = () => {
   const handleUserNameSubmit = (name) => {
     if (!name || !socket) return;
 
+    console.log("이름: ", name);
     socket.emit("setUserName", name);
   };
 
