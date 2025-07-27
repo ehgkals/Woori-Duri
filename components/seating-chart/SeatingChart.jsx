@@ -1,25 +1,24 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { io } from "socket.io-client";
 import { useRouter } from "next/navigation";
+import { useSocket } from "@/context/SocketContext";
 import Seat from "./Seat";
 import UserModal from "../modal/UserModal";
 import ReadyModal from "../modal/ReadyModal";
 
 const SeatingChart = ({ readyTriggerRef }) => {
+  const socket = useSocket();
   const [userData, setUserData] = useState([]);
   const [userIP, setUserIP] = useState("");
   const [userName, setUserName] = useState("");
   const [showUserModal, setShowUserModal] = useState(false);
   const [showReadyModal, setShowReadyModal] = useState(false);
   const [nextScreen, setNextScreen] = useState(false);
-  const socketRef = React.useRef(null); // socket 값을 유지하기 위해
   const router = useRouter();
 
   useEffect(() => {
-    const socket = io("http://192.168.219.104:4000");
-    socketRef.current = socket;
+    if (!socket) return;
 
     // 서버로부터 받은 좌석 상태로 업데이트
     socket.on("userStatus", (data) => {
@@ -44,8 +43,12 @@ const SeatingChart = ({ readyTriggerRef }) => {
       setNextScreen(true);
     });
 
-    return () => socket.disconnect();
-  }, []);
+    return () => {
+      socket.off("userStatus");
+      socket.off("showReadyModal");
+      socket.off("moveToNextScreen");
+    };
+  }, [socket]);
 
   useEffect(() => {
     if (nextScreen) {
@@ -63,22 +66,16 @@ const SeatingChart = ({ readyTriggerRef }) => {
   }, [readyTriggerRef]);
 
   const handleUserNameSubmit = (name) => {
-    if (!name || !socketRef.current) return;
+    if (!name || !socket) return;
 
-    socketRef.current.emit("setUserName", name);
+    socket.emit("setUserName", name);
     setUserName(name);
     setShowUserModal(false);
   };
 
-  const handleReadyButton = () => {
-    if (socketRef.current) socketRef.current.emit("requestReady");
-  };
-
   const handleReady = () => {
-    setShowReadyModal(false);
-    console.log("handleReady 실행", userIP, userName);
-    if (socketRef.current && userIP) {
-      socketRef.current.emit("readyResponse", { ip: userIP });
+    if (socket && userIP) {
+      socket.emit("readyResponse", { ip: userIP });
     }
   };
 

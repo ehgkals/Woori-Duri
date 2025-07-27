@@ -1,6 +1,15 @@
+"use client";
+
+import { useSocket } from "@/context/SocketContext";
 import React from "react";
 
-const Header = ({ onReadyClick }) => {
+const Header = () => {
+  const socket = useSocket();
+
+  const handleReadyClick = () => {
+    if (socket) socket.emit("requestReady");
+  };
+
   return (
     <header
       className="w-full py-4 px-8 flex items-center justify-between shadow"
@@ -20,7 +29,7 @@ const Header = ({ onReadyClick }) => {
         <img
           src="/wooriduri-logo.png"
           alt="WOORI DURI 로고"
-          className="h-13 object-contain block"
+          className="h-14 object-contain block"
         />
       </div>
 
@@ -35,7 +44,7 @@ const Header = ({ onReadyClick }) => {
           letterSpacing: "1px",
         }}
         type="button"
-        onClick={onReadyClick}
+        onClick={handleReadyClick}
       >
         우리 함께
       </button>
