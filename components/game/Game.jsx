@@ -1,16 +1,28 @@
 "use client";
 
-const { useState, useEffect, useRef } = require("react");
+import { useRouter } from "next/navigation";
+import { useGameAccess } from "@/context/GameAccessContext";
+import { useState, useEffect } from "react";
 
 const WORD_COUNT = 20;
 const WORD_API_URL = `https://random-word-api.herokuapp.com/word?number=${WORD_COUNT}`;
 
 const Game = () => {
+  const { enterGame, setEnterGame } = useGameAccess();
   const [words, setWords] = useState([]);
   const [currentWord, setCurrentWord] = useState(0);
   const [score, setScore] = useState(0);
   const [inputValue, setInputValue] = useState("");
   const [inputError, setInputError] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!enterGame) {
+      router.replace("/");
+    }
+
+    return () => setEnterGame(false);
+  }, [enterGame, setEnterGame, router]);
 
   useEffect(() => {
     fetch(WORD_API_URL)

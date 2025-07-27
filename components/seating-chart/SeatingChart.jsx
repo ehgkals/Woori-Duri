@@ -1,14 +1,16 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSocket } from "@/context/SocketContext";
 import Seat from "./Seat";
 import UserModal from "../modal/UserModal";
 import ReadyModal from "../modal/ReadyModal";
+import { useGameAccess } from "@/context/GameAccessContext";
 
 const SeatingChart = () => {
   const socket = useSocket();
+  const { setEnterGame } = useGameAccess();
   const [userData, setUserData] = useState([]);
   const [userIP, setUserIP] = useState("");
   const [userName, setUserName] = useState("");
@@ -50,19 +52,23 @@ const SeatingChart = () => {
     };
   }, [socket]);
 
+  // Game 페이지로 이동
   useEffect(() => {
     if (nextScreen) {
+      setEnterGame(true); // 정상적으로 진입했는지 확인
       router.push("/game");
       setNextScreen(false);
     }
-  }, [nextScreen, router]);
+  }, [nextScreen, router, setEnterGame]);
 
+  // User 이름 설정
   const handleUserNameSubmit = (name) => {
     if (!name || !socket) return;
 
     socket.emit("setUserName", name);
   };
 
+  // 준비 완료 상태
   const handleReady = () => {
     if (socket && userIP) {
       socket.emit("readyResponse", { ip: userIP });
