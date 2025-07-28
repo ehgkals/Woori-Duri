@@ -13,6 +13,7 @@ const Game = () => {
 
   const [userIP, setUserIP] = useState("");
   const [userName, setUserName] = useState("");
+  console.log(userName);
 
   const [countdown, setCountdown] = useState(null);
   const [showGame, setShowGame] = useState(false); // 로딩 완료 시
@@ -46,6 +47,7 @@ const Game = () => {
   // IP에 사용자 이름 저장
   useEffect(() => {
     if (!socket) return;
+    console.log("Setting");
 
     const myStatus = (data) => {
       console.log("[userStatus 수신]", JSON.stringify(data, null, 2));
@@ -61,13 +63,15 @@ const Game = () => {
 
     socket.on("userStatus", myStatus);
 
+    socket.emit("getUserStatus");
+
     return () => socket.off("userStatus", myStatus);
   }, [socket]);
 
   // 모든 준비 완료 시
   useEffect(() => {
-    console.log("하...", words.length, userName, socket);
-
+    console.log("하...", words.length);
+    console.log("username", userName);
     if (words.length && userName && socket) {
       console.log("들어와");
       socket.emit("readyToStart");

@@ -70,7 +70,7 @@ const LeaderBoard = () => {
                 <td>
                   {user.finishTime !== null
                     ? `${WORD_COUNT} / ${WORD_COUNT}`
-                    : `${user.currentWord || 0} / ${WORD_COUNT}`}
+                    : `${user.currentWord - 1 || 0} / ${WORD_COUNT}`}
                 </td>
                 <td>
                   {user.finishTime !== null
