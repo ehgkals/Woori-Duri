@@ -217,7 +217,7 @@ const Game = () => {
           <span className="text-[#2482c5]">제시된 단어</span>를{" "}
           <span className="text-[#1e88e5]">빠르게</span> 입력하세요!
         </div>
-        <div className="w-full flex items-center justify-center mb-8 h-24 md:h-28">
+        <div className="w-full flex items-center justify-center mb-8 h-24 md:h-28" style={{ userSelect: "none" }}>
           <span className="text-5xl md:text-6xl font-black text-[#1e88e5] tracking-wide drop-shadow">
             {currentWord < words.length ? words[currentWord] : "🎉 게임 끝! 🎉"}
           </span>
@@ -226,8 +226,8 @@ const Game = () => {
           <input
             value={inputValue}
             onChange={(e) => {
-              const onlyLower = e.target.value.replace(/[^a-z]/g, "");
-              setInputValue(onlyLower);
+              const onlyAllowed = e.target.value.replace(/[^a-z\uac00-\ud7a3]/g, "");
+              setInputValue(onlyAllowed);
             }}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {

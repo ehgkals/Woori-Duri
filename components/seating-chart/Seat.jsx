@@ -14,6 +14,7 @@ const Seat = ({ id, userData }) => {
         boxShadow: isOnline ? "0 2px 8px #b6d8f233" : "0 1.5px 5px #dde4eb2e",
       }}
     >
+      {id}
       {isOnline && userName && (
         <span className="mb-1 text-xl font-extrabold text-[#2482c5] break-keep truncate max-w-[92px]">
           {userName}

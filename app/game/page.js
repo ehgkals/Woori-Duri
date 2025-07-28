@@ -27,8 +27,18 @@ export default function GamePage() {
           />
         </div>
       </header>
-      <Game />
-      <LeaderBoard />
+
+      <main className="flex w-full h-[calc(100vh-80px)] text-sm">
+        {/* 게임 영역 */}
+        <div className="flex-1 p-2 overflow-hidden flex items-center justify-center">
+          <Game />
+        </div>
+
+        {/* 순위판 영역 */}
+        <div className="w-[400px] border-l border-gray-300 p-3 bg-gray-50 h-full overflow-y-scroll scrollbar-hide">
+          <LeaderBoard />
+        </div>
+      </main>
     </SocketProvider>
   );
 }

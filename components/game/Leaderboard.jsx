@@ -38,20 +38,20 @@ const LeaderBoard = () => {
   });
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-8 mt-8 w-full max-w-3xl mx-auto">
-      <div className="text-2xl font-bold mb-4 text-[#1e88e5]">
+    <div className="bg-white rounded-lg shadow p-4 w-full mx-auto text-sm">
+      <div className="text-base font-semibold mb-3 text-[#1e88e5]">
         🏆 실시간 리더보드
       </div>
       {sorted.length === 0 ? (
-        <div className="text-lg text-gray-500">아직 참여자가 없습니다.</div>
+        <div className="text-gray-500 text-sm">아직 참여자가 없습니다.</div>
       ) : (
-        <table className="w-full text-center text-xl">
+        <table className="w-full text-center text-sm">
           <thead>
-            <tr className="border-b">
-              <th>순위</th>
-              <th>이름</th>
-              <th>진행</th>
-              <th>기록(초)</th>
+            <tr className="border-b text-gray-700">
+              <th className="py-1">순위</th>
+              <th className="py-1">이름</th>
+              <th className="py-1">진행</th>
+              <th className="py-1">기록</th>
             </tr>
           </thead>
           <tbody>
@@ -59,7 +59,7 @@ const LeaderBoard = () => {
               <tr
                 key={user.ip}
                 className={
-                  "h-12" +
+                  "h-8" +
                   (user.ip === myIP
                     ? " bg-gradient-to-r from-[#e3f2fd] to-[#bbdefb] font-bold"
                     : "")
