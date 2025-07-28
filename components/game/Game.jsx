@@ -281,6 +281,7 @@ const Game = () => {
           <button
             onClick={() => {
               sessionStorage.removeItem("accessGame");
+              if (socket) socket.disconnect();
               router.replace("/");
             }}
             className="mt-12 bg-gradient-to-r from-[#1e88e5] to-[#42a5f5] text-white font-bold px-16 py-6 rounded-full shadow-lg hover:scale-105 transition-all text-3xl"

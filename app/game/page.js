@@ -1,9 +1,10 @@
 import Game from "@/components/game/Game";
 import LeaderBoard from "@/components/game/LeaderBoard";
+import { SocketProvider } from "@/context/SocketContext";
 
 export default function GamePage() {
   return (
-    <>
+    <SocketProvider>
       <header
         className="w-full py-4 px-8 flex items-center justify-between shadow"
         style={{
@@ -28,6 +29,6 @@ export default function GamePage() {
       </header>
       <Game />
       <LeaderBoard />
-    </>
+    </SocketProvider>
   );
 }
