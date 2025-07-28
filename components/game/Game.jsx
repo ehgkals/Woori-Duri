@@ -47,16 +47,11 @@ const Game = () => {
   // IP에 사용자 이름 저장
   useEffect(() => {
     if (!socket) return;
-    console.log("Setting");
 
     const myStatus = (data) => {
-      console.log("[userStatus 수신]", JSON.stringify(data, null, 2));
       if (data.me) setUserIP(data.me);
       const me = data.list.find((u) => u.ip === data.me);
-      console.log("내 ip:", data.me, "me 객체:", me);
-      console.log(me);
       if (me && me.name) {
-        console.log("내 이름 세팅:", me.name);
         setUserName(me.name);
       }
     };
@@ -70,10 +65,7 @@ const Game = () => {
 
   // 모든 준비 완료 시
   useEffect(() => {
-    console.log("하...", words.length);
-    console.log("username", userName);
     if (words.length && userName && socket) {
-      console.log("들어와");
       socket.emit("readyToStart");
     }
   }, [words, userName, socket]);
@@ -108,7 +100,7 @@ const Game = () => {
     if (showGame && currentWord < words.length) {
       socket.emit("playingGame", {
         ip: userIP,
-        currentWord: currentWord + 1,
+        currentWord: currentWord,
       });
     }
   }, [currentWord, showGame, words.length, socket, userIP]);
