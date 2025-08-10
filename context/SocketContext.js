@@ -2,8 +2,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
-//const SOCKET_URL = "http://192.168.0.42:4000";
-const SOCKET_URL = "http://192.168.219.108:4000";
+const SOCKET_URL = "http://13.211.77.112:4000";
 
 const SocketContext = createContext(null);
 
@@ -21,7 +20,5 @@ export function SocketProvider({ children }) {
     };
   }, []);
 
-  return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
-  );
+  return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
 }
